@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tyba_test/models/university.dart';
-import 'package:tyba_test/services/university_service.dart'; 
+import 'package:tyba_test/screens/university_detail_screen.dart';
+import 'package:tyba_test/services/university_service.dart';
 
 class UniversitiesScreen extends StatefulWidget {
   const UniversitiesScreen({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _UniversitiesScreenState extends State<UniversitiesScreen> {
   @override
   void initState() {
     super.initState();
-    _futureUniversities = UniversityService.fetchUniversities(); 
+    _futureUniversities = UniversityService.fetchUniversities();
   }
 
   void _toggleView() {
@@ -45,32 +46,34 @@ class _UniversitiesScreenState extends State<UniversitiesScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No se encontraron universidades.'));
+            return const Center(
+              child: Text('No se encontraron universidades.'),
+            );
           } else {
             final universities = snapshot.data!;
             return _isGrid
                 ? GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 8.0,
-                      crossAxisSpacing: 8.0,
-                      childAspectRatio: 3 / 2,
-                    ),
-                    itemCount: universities.length,
-                    itemBuilder: (context, index) {
-                      final university = universities[index];
-                      return _buildUniversityCard(university);
-                    },
-                  )
+                  padding: const EdgeInsets.all(8.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8.0,
+                    crossAxisSpacing: 8.0,
+                    childAspectRatio: 3 / 2,
+                  ),
+                  itemCount: universities.length,
+                  itemBuilder: (context, index) {
+                    final university = universities[index];
+                    return _buildUniversityCard(university);
+                  },
+                )
                 : ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: universities.length,
-                    itemBuilder: (context, index) {
-                      final university = universities[index];
-                      return _buildUniversityCard(university);
-                    },
-                  );
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: universities.length,
+                  itemBuilder: (context, index) {
+                    final university = universities[index];
+                    return _buildUniversityCard(university);
+                  },
+                );
           }
         },
       ),
@@ -83,7 +86,13 @@ class _UniversitiesScreenState extends State<UniversitiesScreen> {
         title: Text(university.name),
         subtitle: Text(university.country),
         onTap: () {
-          // TODO: Navegar a detalle
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => UniversityDetailScreen(university: university),
+            ),
+          );
         },
       ),
     );
